@@ -30,8 +30,8 @@ function register() {
 
             firebase
                 .database()
-                .ref("Poll App")
-                .child("Registration Data/" + result.uid)
+                .ref("polApp")
+                .child("users/" + result.uid)
                 .set(obj);
             console.log(result);
             setTimeout(() => {
