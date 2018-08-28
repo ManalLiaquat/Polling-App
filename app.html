@@ -42,9 +42,7 @@
             <ul class="navbar-nav mr-auto">
             </ul>
             <!-- <button class="btn btn-outline-success float-right" type="">Search</button> -->
-            <a class="btn btn-xs btn-success navBtn" href="./pollinglist.html" role="button" id="">
-                <i class="fa fa-list"></i>&ThickSpace; POLLING LIST</a>
-            <a class="btn btn-xs btn-secondary navBtn" href="#" role="button" id="logoutBtn" onclick="logOut()">
+            <a class="btn btn-xs btn-secondary navBtn text-white" role="button" id="logoutBtn" onclick="logOut()">
                 <i class="fa fa-sign-out"></i>&ThickSpace; LOG OUT</a>
             <a class="btn btn-xs btn-primary navBtn" href="index.html" role="button" style="display: none;" id="loginBtn">
                 <i class="fa fa-sign-in"></i>&ThickSpace; LOG IN</a>
@@ -54,7 +52,7 @@
         <div class="container">
             <div class="bg-info row" id="adding">
                 <!-- Button trigger modal -->
-                <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#exampleModalCenter">
+                <button type="button" class="btn btn-success " data-toggle="modal" data-target="#exampleModalCenter">
                     Create Poll
                 </button>
 
@@ -81,7 +79,7 @@
                                 </form>
                             </div>
                             <div class="modal-footer">
-                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal" id="closeModal">Close</button>
                                 <button type="button" onclick="uploadPoll()" class="btn btn-primary">Upload</button>
                             </div>
                         </div>
@@ -98,11 +96,11 @@
 
         <div class="container bg-success text-white addedTasks" id="">
             <div class="container">
-                <h3>Tasks
+                <h3>Party Names
                     <i class="fa fa-thumb-tack"></i>
                 </h3>
                 <hr width="70%">
-                <ul id="task">
+                <ul id="pollings">
 
                 </ul>
             </div>
