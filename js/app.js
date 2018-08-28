@@ -1,4 +1,4 @@
-const firebaseDB = firebase.database().ref("/Poll App");
+const firebaseDB = firebase.database().ref("/polApp");
 
 /* Authentication Details Start */
 
@@ -50,85 +50,86 @@ function uploadPoll() {
         uid: currentUser
     }
 
-    firebaseDB.child("AppData/Polling").push(myFormData)
-        .then(() => {
-            pollHeading.value = "";
-            question.value = "";
-            optionA.value = "";
-            optionB.value = "";
-        });
+    // firebaseDB.child("AppData/Polling").push(myFormData)
+    firebaseDB.child("poling" + "/" + myFormData.heading.toLowerCase() + '/')
+        .once("value", (data) => {
+            let polingData = data.val()
+            if (polingData === null) {
+                firebaseDB.child("poling" + "/" + myFormData.heading.toLowerCase() + '/').set(myFormData)
+                    .then(() => {
+                        pollHeading.value = "";
+                        question.value = "";
+                        optionA.value = "";
+                        optionB.value = "";
+                    });
+                document.getElementById('exampleModalCenter').hidden;
+            } else {
+                alert("Your created name is already exsist")
+            }
+        })
+
 }
 
 var ul = document.getElementById("pollings");
 function getData() {
-    firebaseDB.child("AppData/Polling/").once("value")
+    // firebaseDB.child("AppData/Polling/").once("value")
+    firebaseDB.child("poling/").once("value")
         .then(function (result) {
-            var postObject = result.val();       /*we call all the data from appdata*/
-            var keys = Object.keys(postObject);  /*we are again asking for todo unique key so that we can run our loop till the end of todo list*/
-            console.log(keys);
-            for (let i = 0; i < keys.length; i++) {
-                let currentObject = postObject[keys[i]];  /*we got the first todo and enter to the first todo*/
-                console.log(currentObject);
-                let voteBTN = document.createElement("button");
-                let li = document.createElement("LI");
-                var buttontext = document.createTextNode("Vote");
-                voteBTN.appendChild(buttontext);
-                voteBTN.className = 'btn btn-info'
-                voteBTN.setAttribute('id','voteBTN')
-                let poleText = document.createTextNode(`${currentObject.heading}`)
-                li.appendChild(poleText)
-                li.appendChild(voteBTN)
-                ul.appendChild(li);
-                checkUID();
-                voteBTN.addEventListener('click', event => {
-                    let uid = firebase.auth().currentUser.uid;
-                    var obj = {uid: uid}
-                    firebaseDB.child("AppData/Voting/" + currentObject.heading + "/").push(obj);
-                    // this.style.display = 'none'
-                    console.log(keys[i]);
-                })
+            var listArray = []
+            var postObject = result.val();
+            console.log(result.val(), 'result')
+            for (var key in postObject) {
+                console.log(postObject[key], "for var key")
+                listArray.push(postObject[key])
             }
-        })
-}
+            console.log(listArray, "listArray")
+            listArray.map((v, i) => {
+                var li = document.createElement('li')
+                var text = document.createTextNode(v.heading);
+                var button = document.createElement('button');
+                var btnText = document.createTextNode('Vote');
+                li.appendChild(text);
+                button.appendChild(btnText)
+                button.className = 'btn btn-info'
+                li.appendChild(button)
+                ul.appendChild(li)
+                button.addEventListener('click', () => {
+                    console.log(v.heading)
+                    var votArray = []
+                    var user = firebase.auth().currentUser.uid;
+                    firebaseDB.child("voted/").once("value", (data) => {
+                        let dataVoted = data.val()
+                        // console.log(dataVoted)
+                        for (var key in dataVoted) {
+                            console.log(dataVoted[key])
+                            for (var prop in dataVoted[key]) {
+                                console.log(dataVoted[key][prop])
+                                votArray.push(dataVoted[key][prop])
+                            }
+                        }
+                        var flag = false;
+                        for (var i = 0; i < votArray.length; i++) {
+                            console.log(votArray[i], "for")
+                            if (user === votArray[i]) {
+                                flag = true
+                                swal('Error', `You are already voted`, 'error');
+                                // button.disabled = true;
 
-function checkUID() {
-    firebaseDB.child("AppData/Voting/").once('value')
-        .then((data)=>{
-            var arrObj = [];
-            var objData = data.val();
-            console.log(objData);
-            for (var key in objData) {
-                console.log(objData[key])
-                for (var pol in objData[key]) {
-                    arrObj.push(objData[key][pol])
-                    console.log(objData[key][pol])
-                }
-            }
-            var userUID = firebase.auth().currentUser.uid;
-            console.log(arrObj)
-            arrObj.map((v,i)=>{
-                if (v.uid === userUID) {
-                    document.getElementById('voteBTN').style.display='none';
-                }
-                console.log(v.uid)
+                            }
+                        }
+                        if (flag === false) {
+                            firebaseDB.child("voted" + '/' + v.heading + "/").push(user)
+                            swal('Done', `You voted for ${v.heading}`, 'success');
+                        }
+                    })
+                })
             })
         })
-    
 }
 
-// getData();
-// function crateElement(text, element) {
-//     var li = document.createElement(element);
-//     var textNode = document.createTextNode(text);
-//     li.appendChild(textNode);
-//     var btn = document.createElement('BUTTON');
-//     btn.setAttribute('id', 'voteBTN');
-//     btn.className = 'btn btn-info'
-//     var btnText = document.createTextNode('VOTE')
-//     btn.appendChild(btnText)
-//     li.appendChild(btn)
-//     // li.setAttribute('class', className);
-//     return li;
-// }
 
-
+function voted() {
+    alert("aasdas")
+    var list = document.getElementsByTagName('li')
+    console.log(list, 'list')
+}
